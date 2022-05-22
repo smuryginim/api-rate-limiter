@@ -18,6 +18,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.naming.LimitExceededException
+import javax.servlet.http.HttpServletRequest
 
 @Aspect
 @Component
@@ -35,23 +36,23 @@ class RateLimitAspect {
     fun rateLimitWithResponse(joinPoint: ProceedingJoinPoint, rateLimit: RateLimit): Any? {
         val args = joinPoint.args
 
-        /*val repoDetails: RepoDetails = try {
-            args.filterIsInstance<RepoDetails>().first()
+        val request: HttpServletRequest = try {
+            args.filterIsInstance<HttpServletRequest>().first()
         } catch (e: Exception) {
             // Grant possibility to main logic to decide what to do
-            logger.warn("Advice: Token corrupted")
+            logger.warn("Rate limiter advice: Couldn't extract request information, no rate limit will be applied.")
             return joinPoint.proceed(args)
-        }*/
+        }
 
         val ratePerMinute = rateLimit.maxRatePerMinute
-        val clientId = "clientId"
+        val remoteAddress = request.remoteAddr
 
         val withException = rateLimit.withException
-        if (isRateExceeded(clientId, ratePerMinute)) {
+        if (isRateExceeded(remoteAddress, ratePerMinute)) {
             if (withException) {
-                throw LimitExceededException("Limit for repoAccessId = '$clientId' is greater than allowed ($ratePerMinute)")
+                throw LimitExceededException("Limit for repoAccessId = '$remoteAddress' is greater than allowed ($ratePerMinute)")
             } else {
-                return generateRateLimitResponse(clientId, ratePerMinute)
+                return generateRateLimitResponse(remoteAddress, ratePerMinute)
             }
         }
 
