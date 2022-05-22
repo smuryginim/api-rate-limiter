@@ -1,0 +1,16 @@
+version: '1'
+
+services:
+
+  postgres:
+    container_name: sm-postgres
+    image: postgres:12
+    ports:
+      - "5432:5432"
+
+  redis:
+      container_name: sm-redis
+      image: redis:7.0
+      ports:
+          - "6379:6379"
+
