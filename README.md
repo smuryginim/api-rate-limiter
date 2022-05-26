@@ -15,7 +15,6 @@ Rate limit key is IP address of the request.
  ## Prerequisites
  
  1. Docker installed
- 2. JDK installed
  
  ## Launch and test
  
@@ -23,14 +22,18 @@ Rate limit key is IP address of the request.
  `docker-compose up -d redis`
  
  2. Run RateLimiter application
- ``
+ `docker-compose build ratelimiter`
+ `docker-compose up -d ratelimiter`
+ 
+ or simply use command 
+ `make docker-build-and-run`
 . It is launched by default with port 8097
  
  3. Run several requests (default configuration 5 requests per minute)
 
 `curl -l http://localhost:8097/api/v1/customers/1`
  
- 4. If you execute more then 5 requests in a minute the next exception will be displayed
+ 4. If you execute more than 5 requests in a minute the next exception will be displayed
  ```
 {
   "timestamp": "2022-05-22T17:34:45.901192300Z",

@@ -2,6 +2,20 @@ version: '1'
 
 services:
 
+  ratelimiter:
+    container_name: sm-ratelimiter
+    image: ratelimiter:latest
+    build:
+      dockerfile: docker/Dockerfile
+      context: .
+    ports:
+      - "8097:8097"
+    #healthcheck:
+    #  test: [ "CMD", "curl" ,"-f", "http://localhost:8097/v1/health/liveness" ]
+    #  timeout: 5s
+    #  retries: 5
+
+
   postgres:
     container_name: sm-postgres
     image: postgres:12
